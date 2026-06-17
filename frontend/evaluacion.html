@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Vocacional IA - I.E. Leonor Cerna</title>
+    <link rel="icon" href="assets/insignia.webp" type="image/webp">
+    <link rel="stylesheet" href="css/evaluacion.css">
+</head>
+<body>
+
+    <header class="eval-header">
+        <div class="logo-title">
+            <img src="assets/insignia.webp" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40/3D52A0/FFFFFF?text=LC';">
+            <span>Test Vocacional IA</span>
+        </div>
+        <a href="alumno_inicio.html" class="btn-salir" id="btn-salir">Salir de la evaluación</a>
+    </header>
+
+    <main class="eval-main">
+        <div class="progress-wrapper">
+            <div class="progress-text">Pregunta <span id="current-q-num">1</span> de <span id="total-q-num">5</span></div>
+            <div class="progress-bg">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <section class="question-container" id="question-container">
+            </section>
+
+        <div class="eval-nav">
+            <button id="btn-prev" class="btn-nav hidden">Anterior</button>
+            <button id="btn-next" class="btn-nav" disabled>Siguiente</button>
+            <button id="btn-submit" class="btn-submit-eval hidden">Finalizar y Analizar con IA</button>
+        </div>
+    </main>
+
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loader"></div>
+        <h2>La Inteligencia Artificial está analizando tu perfil...</h2>
+        <p>Esto puede tomar unos segundos.</p>
+    </div>
+
+    <script src="js/evaluacion.js"></script>
+</body>
+</html>

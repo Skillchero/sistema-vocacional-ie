@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - I.E. Leonor Cerna</title>
+    <link rel="icon" href="assets/insignia.webp" type="image/webp">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/insignia.webp" alt="Logo" class="sidebar-logo" onerror="this.src='https://via.placeholder.com/50/3D52A0/FFFFFF?text=LC';">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin_dashboard.html" class="active">👥 Usuarios Registrados</a>
+                <a href="crear_usuario.html">➕ Crear Usuario</a>
+                <a href="login.html" class="logout-btn">🚪 Cerrar Sesión</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1>Gestión de Usuarios</h1>
+                <div class="admin-profile">
+                    <span>Bienvenido, <strong id="nombre-usuario">Cargando...</strong></span>
+                </div>
+            </header>
+
+            <section class="metrics">
+                <div class="metric-card">
+                    <h3>Total Usuarios Registrados</h3>
+                    <p class="number" id="total-usuarios">--</p>
+                </div>
+                <div class="metric-card alert-card">
+                    <h3>Solicitudes de Contraseña</h3>
+                    <p class="number">3 pendientes</p>
+                </div>
+            </section>
+
+            <section class="table-section">
+                <div class="table-header">
+                    <h2>Directorio del Sistema</h2>
+                    <a href="crear_usuario.html" class="btn-primary">Nuevo Usuario</a>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombres y Apellidos</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-usuarios-body">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

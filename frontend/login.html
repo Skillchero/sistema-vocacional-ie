@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - I.E. Leonor Cerna</title>
+    <link rel="icon" href="assets/insignia.webp" type="image/webp">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo-nav">
+            <img src="assets/insignia.webp" alt="Logo Leonor Cerna" class="logo-img" onerror="this.src='https://via.placeholder.com/50/3D52A0/FFFFFF?text=LC';">
+            <span class="nav-title">I.E. Leonor Cerna</span>
+        </div>
+        <a href="index.html" class="btn-volver">← Volver al Inicio</a>
+    </header>
+
+    <main class="login-wrapper">
+        <div class="login-card">
+            <h2>Bienvenido</h2>
+            <p>Inicia sesión para realizar tu test vocacional con IA</p>
+
+            <form id="loginForm">
+                
+                <div class="input-group">
+                    <label for="email">Correo o Usuario</label>
+                    <input type="text" id="email" required placeholder="tu@correo.edu.pe" autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-submit">Ingresar al Sistema</button>
+            </form>
+
+            <a href="recuperar.html" class="forgot-link">¿Olvidaste tu contraseña?</a>
+        </div>
+    </main>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

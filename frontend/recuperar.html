@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - I.E. Leonor Cerna</title>
+    <link rel="icon" href="assets/insignia.webp" type="image/webp">
+    <link rel="stylesheet" href="css/recuperar.css">
+</head>
+<body>
+    <header>
+        <div class="logo-nav">
+            <img src="assets/insignia.webp" alt="Logo" class="logo-img">
+            <span class="nav-title">I.E. Leonor Cerna</span>
+        </div>
+        <a href="login.html" class="btn-volver">← Volver al Login</a>
+    </header>
+
+    <main class="recovery-wrapper">
+        <div class="recovery-card">
+            <h2>Recuperar Acceso</h2>
+            <p>Ingresa tu usuario o correo. El administrador recibirá tu solicitud para restablecer la contraseña.</p>
+
+            <form id="recoveryForm">
+                <div class="input-group">
+                    <label for="usuario">Correo o Usuario</label>
+                    <input type="text" id="usuario" required placeholder="tu@correo.edu.pe">
+                </div>
+                <button type="submit" class="btn-submit">Enviar Solicitud</button>
+            </form>
+        </div>
+    </main>
+    <script src="js/recuperar.js"></script>
+</body>
+</html>

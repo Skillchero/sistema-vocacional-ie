@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tus Resultados - Orientación Vocacional IA</title>
+    <link rel="icon" href="assets/insignia.webp" type="image/webp">
+    <link rel="stylesheet" href="css/resultados.css">
+</head>
+<body>
+
+    <header class="student-header">
+        <div class="logo-nav">
+            <img src="assets/insignia.webp" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/45/3D52A0/FFFFFF?text=LC';">
+            <span class="nav-title">I.E. Leonor Cerna - IA Vocacional</span>
+        </div>
+        <div class="user-menu">
+            <a href="alumno_inicio.html" class="btn-volver">← Volver al Panel</a>
+        </div>
+    </header>
+
+    <main class="results-main">
+        <div class="results-header">
+            <h1>Tu Informe Vocacional Personalizado</h1>
+            <p>Generado por Inteligencia Artificial (Gemini) basado en tus respuestas.</p>
+        </div>
+
+        <div id="loader-section" class="loader-section">
+            <div class="spinner"></div>
+            <p>Cargando tu reporte...</p>
+        </div>
+
+        <div id="report-content" class="report-content hidden">
+            
+            <section class="report-card highlight-card">
+                <h2 id="ai-saludo">¡Hola!</h2>
+                <div class="fortalezas-content">
+                    <h3>Análisis de tu Perfil</h3>
+                    <p id="ai-fortalezas">Analizando tus fortalezas...</p>
+                </div>
+            </section>
+
+            <section class="careers-section">
+                <h3>Tus Mejores Opciones (Top 3)</h3>
+                <div class="careers-grid">
+                    <div class="career-card">
+                        <div class="career-icon">🥇</div>
+                        <h4 id="carrera-1-titulo">Carrera 1</h4>
+                        <p id="carrera-1-desc">Descripción...</p>
+                    </div>
+                    <div class="career-card">
+                        <div class="career-icon">🥈</div>
+                        <h4 id="carrera-2-titulo">Carrera 2</h4>
+                        <p id="carrera-2-desc">Descripción...</p>
+                    </div>
+                    <div class="career-card">
+                        <div class="career-icon">🥉</div>
+                        <h4 id="carrera-3-titulo">Carrera 3</h4>
+                        <p id="carrera-3-desc">Descripción...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="report-card motivational-card">
+                <h3>Mensaje Final</h3>
+                <p id="ai-mensaje-final">Preparando mensaje...</p>
+            </section>
+
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="window.print()">📥 Descargar en PDF</button>
+                <a href="alumno_inicio.html" class="btn-secondary">Volver al Inicio</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/resultados.js"></script>
+</body>
+</html>

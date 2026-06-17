@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio Estudiante - I.E. Leonor Cerna</title>
+    <link rel="icon" href="assets/insignia.webp" type="image/webp">
+    <link rel="stylesheet" href="css/alumno.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="student-header">
+        <div class="logo-nav">
+            <img src="assets/insignia.webp" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/3D52A0/FFFFFF?text=LC';">
+            <span class="nav-title">I.E. Leonor Cerna de Valdiviezo</span>
+        </div>
+        <div class="user-menu">
+            <span class="user-name">Hola, <strong id="nombre-usuario">Cargando...</strong></span>
+            <a href="login.html" class="btn-logout" onclick="localStorage.removeItem('usuario_id'); localStorage.removeItem('usuario_rol');">Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <main class="student-main">
+        
+        <div id="vista-menu" class="vista-activa">
+            <section class="welcome-section">
+                <h1>Tu Futuro Profesional Empieza Aquí</h1>
+                <p>Selecciona una de las opciones a continuación para interactuar con nuestro sistema de Inteligencia Artificial.</p>
+            </section>
+
+            <section class="cards-grid">
+                <div class="action-card test-card" id="btn-abrir-modal">
+                    <div class="card-icon">🧠</div>
+                    <h2>Test de Orientación Vocacional IA</h2>
+                    <p>Responde un cuestionario diseñado para descubrir tus intereses, aptitudes y habilidades clave.</p>
+                    <button class="btn-primary">Empezar Evaluación</button>
+                </div>
+
+                <div class="action-card result-card locked" id="tarjeta-resultados">
+                    <div class="card-icon">📊</div>
+                    <h2>Mis Resultados</h2>
+                    <p>Aquí encontrarás los informes detallados generados por la IA con tus opciones de carreras.</p>
+                    
+                    <button class="btn-secondary" id="btn-ver-historial" disabled>Bloqueado</button>
+                    <span class="lock-msg" id="msg-bloqueo">Disponible al terminar tu primer test</span>
+                </div>
+            </section>
+        </div>
+
+        <div id="vista-historial" class="vista-oculta">
+            <div class="historial-header">
+                <h3>Mi Historial de Evaluaciones</h3>
+                <p>Aquí quedan registrados todos tus test procesados por nuestra Inteligencia Artificial.</p>
+            </div>
+            
+            <div id="contenedor-historial" class="grid-historial">
+                </div>
+        </div>
+
+    </main>
+
+    <div class="modal-overlay" id="modal-instrucciones">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Instrucciones de la Evaluación</h2>
+                <button class="btn-close" id="btn-cerrar-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Estás a punto de iniciar tu evaluación vocacional asistida por Inteligencia Artificial. Por favor, lee atentamente:</p>
+                <ul>
+                    <li>No hay respuestas correctas o incorrectas. Sé lo más sincero(a) posible.</li>
+                    <li>El test consta de preguntas de opción múltiple y <strong>una pregunta final abierta</strong> donde podrás expresarte libremente.</li>
+                    <li>Tómate tu tiempo. El sistema analizará tus respuestas para darte recomendaciones 100% objetivas.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="btn-cancelar">Cancelar</button>
+                <a href="evaluacion.html" class="btn-start">Comprendo, empezar el Test</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-informe">
+        <div class="modal-content modal-largo">
+            <div class="modal-header">
+                <h2><i class="fas fa-robot"></i> Informe Vocacional IA</h2>
+                <button class="btn-close" onclick="cerrarVisorInforme()">&times;</button>
+            </div>
+            <div class="modal-body scroll-body">
+                <p class="modal-meta">Fecha de evaluación: <span id="modal-fecha" style="font-weight:bold; color:var(--azul-principal);">--/--/----</span></p>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--borde);">
+                
+                <div id="modal-cuerpo-informe"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="cerrarVisorInforme()">Cerrar Informe</button>
+                <button class="btn-start" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/alumno.js"></script>
+</body>
+</html>

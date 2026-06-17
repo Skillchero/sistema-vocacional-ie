@@ -1,0 +1,314 @@
+:root {
+    /* Paleta Institucional del Colegio */
+    --azul-claro:      #EEF0F9;
+    --azul-suave:      #C5CBE8;
+    --azul-medio:      #7B8AC9;
+    --azul-principal:  #3D52A0;
+    --azul-oscuro:     #1B2870;
+
+    --rojo-claro:      #FDECEA;
+    --rojo-principal:  #C0392B;
+
+    --dorado-claro:    #FAEAB0;
+    --dorado-principal:#D4A017;
+
+    /* Neutros de diseño */
+    --fondo:           #F8F9FA;
+    --texto-ppal:      #212529;
+    --texto-sec:       #495057;
+    --borde:           #ADB5BD;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--fondo);
+    color: var(--texto-ppal);
+    overflow-x: hidden;
+}
+
+/* Contenedor Global Dividido */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+/* --- BARRA LATERAL (SIDEBAR) --- */
+.sidebar {
+    width: 260px;
+    background-color: var(--azul-oscuro);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-header {
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+    width: 75px;
+    height: auto;
+    max-height: 95px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
+}
+
+.sidebar-title {
+    color: var(--dorado-principal);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.sidebar-menu {
+    flex-grow: 1;
+    padding: 2rem 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--azul-claro);
+    text-decoration: none;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.menu-item:hover, .menu-item.active {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: white;
+    border-left-color: var(--dorado-principal);
+}
+
+.menu-icon {
+    font-size: 1.1rem;
+}
+
+.sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-sidebar-logout {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #fca5a5;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background 0.2s;
+}
+
+.btn-sidebar-logout:hover {
+    background-color: rgba(239, 68, 68, 0.15);
+}
+
+/* --- ESPACIO DE CONTENIDO (DERECHA) --- */
+.main-content {
+    margin-left: 260px;
+    flex-grow: 1;
+    padding: 2rem 3rem;
+    width: calc(100% - 260px);
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--azul-suave);
+    padding-bottom: 1rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    color: var(--azul-oscuro);
+    font-weight: 700;
+}
+
+.user-welcome {
+    font-size: 0.95rem;
+    color: var(--texto-sec);
+}
+
+/* --- TARJETAS MÉTRICAS --- */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.metric-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.metric-card.azul { border-left: 5px solid var(--azul-principal); }
+.metric-card.rojo { border-left: 5px solid var(--rojo-principal); }
+.metric-card.dorado { border-left: 5px solid var(--dorado-principal); }
+
+.metric-label {
+    font-size: 0.85rem;
+    color: var(--texto-sec);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.metric-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--azul-oscuro);
+}
+
+/* --- SECCIÓN DE TABLA --- */
+.section-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 1.5rem;
+}
+
+.card-header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    color: var(--azul-oscuro);
+    font-weight: 700;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.search-box {
+    padding: 0.5rem 1rem;
+    width: 280px;
+    border: 1px solid var(--borde);
+    border-radius: 5px;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.search-box:focus {
+    border-color: var(--azul-principal);
+}
+
+.filter-dropdown {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--borde);
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* --- CUADRO DE TABLA --- */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.dashboard-table th {
+    background-color: var(--azul-claro);
+    color: var(--azul-oscuro);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 1rem;
+    border-bottom: 2px solid var(--azul-suave);
+}
+
+.dashboard-table td {
+    padding: 1rem;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.dashboard-table tbody tr:hover {
+    background-color: #fafbfe;
+}
+
+/* Badges Semánticos */
+.badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.badge.completado {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge.pendiente {
+    background-color: var(--rojo-claro);
+    color: var(--rojo-principal);
+}
+
+/* Botón de informe */
+.btn-ver {
+    background-color: var(--azul-principal);
+    color: white;
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    transition: background 0.2s;
+    box-shadow: 0 2px 4px rgba(61, 82, 160, 0.2);
+}
+
+.btn-ver:hover {
+    background-color: var(--azul-oscuro);
+}
+
+.txt-null {
+    color: var(--texto-sec);
+    font-size: 0.85rem;
+    font-style: italic;
+}

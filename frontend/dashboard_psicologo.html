@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Monitoreo Vocacional - I.E. Leonor Cerna</title>
+    <link rel="icon" href="assets/insignia.webp" type="image/webp">
+    <link rel="stylesheet" href="css/dashboard_psicologo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/insignia.webp" alt="Insignia" class="sidebar-logo" width="75" height="90" onerror="this.src='https://via.placeholder.com/50/3D52A0/FFFFFF?text=LC';">
+                <h3 class="sidebar-title" id="sidebar-role">Panel Docente/Psicólogo</h3>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active">
+                    <span class="menu-icon">📋</span> Lista de Alumnos
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="menu-icon">📊</span> Estadísticas de Avance
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="login.html" class="btn-sidebar-logout">
+                    <span class="menu-icon">🚪</span> Cerrar Sesión
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <header class="content-header">
+                <h1 class="page-title">Seguimiento Vocacional</h1>
+                <div class="user-welcome">Usuario: <strong id="user-display">Cargando Perfil...</strong></div>
+            </header>
+
+            <section class="metrics-grid">
+                <div class="metric-card azul">
+                    <p class="metric-label">Total Alumnos Asignados</p>
+                    <h2 class="metric-value" id="total-alumnos">120</h2>
+                </div>
+                <div class="metric-card rojo">
+                    <p class="metric-label">Evaluaciones Pendientes</p>
+                    <h2 class="metric-value" id="total-pendientes">75</h2>
+                </div>
+                <div class="metric-card dorado">
+                    <p class="metric-label">Test Completados (IA)</p>
+                    <h2 class="metric-value" id="total-evaluados">45</h2>
+                </div>
+            </section>
+
+            <section class="data-section">
+                <div class="section-card">
+                    <div class="card-header-actions">
+                        <h3 class="card-title">Progreso del 5to de Secundaria</h3>
+                        <div class="filter-controls">
+                            <input type="text" id="buscador" class="search-box" placeholder="Buscar por DNI o Apellidos...">
+                            <select id="filtro-seccion" class="filter-dropdown">
+                                <option value="todos">Todas las Secciones</option>
+                                <option value="5to A">5to A</option>
+                                <option value="5to B">5to B</option>
+                                <option value="5to C">5to C</option>
+                                <option value="5to D">5to D</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>DNI / Identificador</th>
+                                    <th>Apellidos y Nombres</th>
+                                    <th>Grado / Sección</th>
+                                    <th>Fecha de Test</th>
+                                    <th>Estado del Test</th>
+                                    <th style="text-align: center;">Informe Vocacional</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-alumnos">
+                                <tr><td colspan="6" style="text-align: center; padding: 15px;">Cargando alumnos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modal-informe" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; width: 90%; max-width: 800px; max-height: 90vh; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            
+            <div class="modal-header" style="padding: 20px; background: #3D52A0; color: white; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0; font-size: 1.5rem;"><i class="fas fa-robot"></i> Informe Vocacional IA</h2>
+                <button onclick="cerrarVisorInforme()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="padding: 20px; overflow-y: auto; flex-grow: 1;">
+                <p>Fecha de evaluación: <span id="modal-fecha" style="font-weight:bold; color: #3D52A0;">--/--/----</span></p>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+                
+                <div id="modal-cuerpo-informe">
+                    </div>
+            </div>
+            
+            <div class="modal-footer" style="padding: 15px 20px; background: #f9f9f9; text-align: right; border-top: 1px solid #eee;">
+                <button onclick="cerrarVisorInforme()" style="padding: 10px 20px; background: #ccc; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">Cerrar</button>
+                <button onclick="window.print()" style="padding: 10px 20px; background: #E5A91E; color: #000; font-weight: bold; border: none; border-radius: 5px; cursor: pointer;">🖨️ Imprimir PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/dashboard_psicologo.js"></script>
+</body>
+</html>
