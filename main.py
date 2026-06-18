@@ -9,13 +9,10 @@ from backend import auth, usuarios, evaluacion
 
 app = FastAPI(title="Sistema Vocacional Leonor Cerna", version="1.0")
 
-# Configuración CORS para que el Front-end pueda conectarse de forma segura
+# Configuración CORS para la NUBE (Permite que GitHub Pages se conecte)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5500",
-        "http://localhost:5500"
-    ], 
+    allow_origins=["*"], # El asterisco permite conexiones desde cualquier URL en internet
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

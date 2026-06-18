@@ -1,3 +1,8 @@
+// ====================================================================
+// CONFIGURACIÓN PROFESIONAL
+// ====================================================================
+const API_URL = "https://api-vocacional-cerna.onrender.com";
+
 document.addEventListener('DOMContentLoaded', () => {
     
     // =====================================================================
@@ -41,8 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function cargarAlumnos() {
         try {
-            // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ!
-            const response = await fetch('https://api-vocacional-cerna.onrender.com/api/psicologo/alumnos');
+            // USO DE LA CONSTANTE API_URL
+            const response = await fetch(`${API_URL}/api/psicologo/alumnos`);
             const result = await response.json();
 
             if (result.status === "success") {
@@ -74,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const estadoTexto = tieneTest ? 'Completado' : 'Pendiente';
             const badgeClass = tieneTest ? 'badge completado' : 'badge pendiente';
             
-            // LLAMADA AL ENDPOINT: Enviamos alumno.usuario_id que requiere la API de historial
             const actionButton = tieneTest 
                 ? `<div style="text-align: center;"><button onclick="abrirInformePsicologo('${alumno.usuario_id}')" class="btn-ver" style="cursor: pointer; background: #3D52A0; color: white; border: none; padding: 5px 10px; border-radius: 5px;">Ver Informe</button></div>`
                 : `<div style="text-align: center;"><span class="txt-null" style="color: #999;">Pendiente</span></div>`;
@@ -129,14 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // =====================================================================
-// CONSUMO DE LA API DE HISTORIAL REAL DESDE EL DASHBOARD DEL PSICÓLOGO
+// CONSUMO DE LA API DE HISTORIAL PARA EL PSICÓLOGO
 // =====================================================================
 async function abrirInformePsicologo(usuarioId) { 
     const modalInforme = document.getElementById('modal-informe');
     const cuerpoInforme = document.getElementById('modal-cuerpo-informe');
     const campoFecha = document.getElementById('modal-fecha');
 
-    // Cambiamos el display del modal a activo usando estilos en línea (flex)
     if (modalInforme) {
         modalInforme.style.display = 'flex';
     }
@@ -145,18 +148,17 @@ async function abrirInformePsicologo(usuarioId) {
     campoFecha.innerText = '--/--/----';
 
     try {
-        // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ TAMBIÉN!
-        const respuesta = await fetch(`https://api-vocacional-cerna.onrender.com/api/historial/${usuarioId}`);
+        // USO DE LA CONSTANTE API_URL
+        const respuesta = await fetch(`${API_URL}/api/historial/${usuarioId}`);
         const datos = await respuesta.json();
 
         if (respuesta.ok && datos.length > 0) {
-            const registro = datos[0]; // Tomamos el test más reciente
+            const registro = datos[0]; 
             
             campoFecha.innerText = new Date(registro.fecha_evaluacion).toLocaleDateString('es-PE', {
                 day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
 
-            // Parseamos y dibujamos el informe de la IA tal como lo hace tu alumno.js
             let informeIA = registro.informe_ia;
             if (typeof informeIA === 'string') {
                 try { informeIA = JSON.parse(informeIA); } catch(e) {}
@@ -185,12 +187,12 @@ async function abrirInformePsicologo(usuarioId) {
 
             cuerpoInforme.innerHTML = htmlContenido;
         } else {
-            cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Este estudiante no tiene un informe válido generado por la IA en su historial.</p>";
+            cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Este estudiante no tiene un informe válido generado por la IA.</p>";
         }
 
     } catch (error) {
         console.error("Error al cargar el historial:", error);
-        cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Error al conectar con el servidor de Render.</p>";
+        cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Error al conectar con el servidor.</p>";
     }
 }
 

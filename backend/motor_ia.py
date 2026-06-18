@@ -8,9 +8,8 @@ import json
 from google import genai
 from google.genai import types
 
-# 1. CONFIGURACIÓN DE CONEXIÓN A LA API SEGURA (Variables de entorno)
-# Render le pasará tu clave real a través de "GEMINI_API_KEY"
-API_KEY = os.environ.get("GEMINI_API_KEY") 
+
+API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDVCs36Z3EDkpi_qHssLk76_dr0AXFLSu0")
 cliente = genai.Client(api_key=API_KEY)
 
 # =====================================================================

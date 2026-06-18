@@ -1,3 +1,8 @@
+// ====================================================================
+// CONFIGURACIÓN PROFESIONAL
+// ====================================================================
+const API_URL = "https://api-vocacional-cerna.onrender.com";
+
 // Batería de 15 Preguntas
 const preguntas = [
     { id: 1, tipo: 'cerrada', pregunta: "1. Si pudieras elegir una sola materia para estudiar todo el año, ¿cuál elegirías?", opciones: ["Matemáticas, Física o Química (Cálculo y ciencias exactas).", "Comunicación, Arte o Historia (Lectura, expresión y sociedad).", "Computación, Robótica o Talleres técnicos (Crear y armar cosas).", "Psicología, Tutoría o Educación Física (Trabajar con personas y bienestar)."] },
@@ -70,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSubmit.classList.add('hidden');
         }
         
-        // Bloquear botones si la pregunta actual no está contestada
         const q = preguntas[preguntaActual];
         if (q.tipo === 'cerrada') {
             btnNext.disabled = !respuestas[q.id];
@@ -119,23 +123,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // =======================================================
-    // ENVIAR DATOS A RENDER
-    // =======================================================
     btnSubmit.addEventListener('click', async () => {
         loadingOverlay.classList.add('active');
         
         const idUsuario = localStorage.getItem('usuario_id') || localStorage.getItem('userId');
 
         if (!idUsuario) {
-            alert("Error: No se encontró la sesión del usuario. Por favor, vuelve a iniciar sesión.");
+            alert("Error: Sesión no encontrada.");
             window.location.href = 'login.html';
             return;
         }
 
         try {
-            // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ!
-            const response = await fetch('https://api-vocacional-cerna.onrender.com/api/guardar-respuestas', {
+            // USO DE LA CONSTANTE API_URL
+            const response = await fetch(`${API_URL}/api/guardar-respuestas`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -147,20 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             if (response.ok && data.status === "success") {
-                console.log("¡Test procesado con éxito por la IA en la nube!");
-                
                 const reporteTexto = typeof data.reporte === 'object' ? JSON.stringify(data.reporte) : data.reporte;
                 localStorage.setItem('reporteVocacional', reporteTexto);
-                
                 window.location.href = 'resultados.html';
             } else {
-                alert("Hubo un problema al procesar tu test en la IA: " + (data.detail || "Error interno"));
+                alert("Error: " + (data.detail || "Error interno"));
                 loadingOverlay.classList.remove('active');
             }
             
         } catch (error) {
-            console.error("Error al conectar con Render:", error);
-            alert("Error: No se pudo conectar al servidor en la nube. Verifica tu conexión.");
+            console.error("Error:", error);
+            alert("Error: Servidor no responde.");
             loadingOverlay.classList.remove('active');
         }
     });

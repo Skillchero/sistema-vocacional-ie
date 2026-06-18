@@ -1,5 +1,18 @@
+// ====================================================================
+// CONFIGURACIÓN PROFESIONAL
+// ====================================================================
+const API_URL = "https://api-vocacional-cerna.onrender.com";
+
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
+
+    // 1. Animación de revelado: Hace aparecer el login con un efecto suave
+    const reveals = document.querySelectorAll('.reveal');
+    reveals.forEach((element) => {
+        setTimeout(() => {
+            element.classList.add('active');
+        }, 100);
+    });
 
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -9,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('password').value;
 
             try {
-                // 1. Enviamos los datos a Python (URL OFICIAL DE RENDER)
-                const response = await fetch('https://api-vocacional-cerna.onrender.com/api/login', {
+                // USO DE LA CONSTANTE PROFESIONAL
+                const response = await fetch(`${API_URL}/api/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -30,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('usuario_id', data.usuario_id);
                     localStorage.setItem('userNombre', data.nombres);
                     localStorage.setItem('userEmail', email);
-                    localStorage.setItem('userRole', data.rol); // Guardamos el rol para futuras consultas
+                    localStorage.setItem('userRole', data.rol);
 
                     // Pasamos el rol a minúsculas para evitar errores
                     const rolUsuario = data.rol.toLowerCase(); 
