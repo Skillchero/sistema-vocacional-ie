@@ -3,13 +3,12 @@
 # Módulo de Inteligencia Artificial y Procesamiento Lógico
 # =====================================================================
 
-import os
 import json
 from google import genai
 from google.genai import types
 
-
-API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDVCs36Z3EDkpi_qHssLk76_dr0AXFLSu0")
+# 1. CONFIGURACIÓN DE CONEXIÓN A LA API
+API_KEY = "AIzaSyDVCs36Z3EDkpi_qHssLk76_dr0AXFLSu0" # Mantén tu clave
 cliente = genai.Client(api_key=API_KEY)
 
 # =====================================================================

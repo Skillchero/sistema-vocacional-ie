@@ -6,15 +6,18 @@ from database import get_db_connection, pwd_context
 
 router = APIRouter()
 
+
 class NuevoUsuarioPayload(BaseModel):
     nombres: str
     apellidos: str
     correo: str
     rol: str
     password: str
+
     # Solo para alumnos
     grado: str | None = None
     seccion: str | None = None
+
 
 @router.get("/api/usuarios")
 async def obtener_usuarios():
@@ -22,6 +25,7 @@ async def obtener_usuarios():
         conn = get_db_connection()
         cur = conn.cursor()
 
+        # Modificado: Usamos LEFT JOIN para buscar los nombres en estudiantes O en personal
         cur.execute("""
             SELECT 
                 u.usuario_id, 
@@ -36,10 +40,12 @@ async def obtener_usuarios():
         """)
 
         usuarios_db = cur.fetchall()
+
         cur.close()
         conn.close()
 
         lista_usuarios = []
+
         for u in usuarios_db:
             lista_usuarios.append({
                 "id_usuario": str(u[0]),
@@ -49,64 +55,158 @@ async def obtener_usuarios():
                 "email": u[4]
             })
 
-        return {"success": True, "usuarios": lista_usuarios}
+        return {
+            "success": True,
+            "usuarios": lista_usuarios
+        }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al cargar usuarios: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al cargar usuarios: {str(e)}"
+        )
+
 
 @router.post("/api/crear-usuario")
 async def crear_usuario(payload: NuevoUsuarioPayload):
     conn = None
     try:
-        # --- BLINDAJE DE SEGURIDAD ---
-        # 1. Aseguramos que sea una cadena de texto plana
-        password_str = str(payload.password)
-        # 2. Quitamos espacios innecesarios
-        password_limpia = password_str.strip()
-        
-        # 3. Validamos longitud antes de encriptar para evitar el error de bcrypt
-        if len(password_limpia) > 72:
-            password_limpia = password_limpia[:72]
-            
-        hash_seguro = pwd_context.hash(password_limpia)
-        # -----------------------------
+        print("\n===== DATOS RECIBIDOS =====")
+        print(payload.dict())
+        print("===========================\n")
+
+        hash_seguro = pwd_context.hash(payload.password)
 
         conn = get_db_connection()
         cur = conn.cursor()
 
+        # 1. Crear usuario principal
         cur.execute("""
-            INSERT INTO usuarios (usuario_id, email, password_hash, rol, fecha_registro)
-            VALUES (uuid_generate_v4(), %s, %s, %s, CURRENT_TIMESTAMP)
+            INSERT INTO usuarios
+            (
+                usuario_id,
+                email,
+                password_hash,
+                rol,
+                fecha_registro
+            )
+            VALUES
+            (
+                uuid_generate_v4(),
+                %s,
+                %s,
+                %s,
+                CURRENT_TIMESTAMP
+            )
             RETURNING usuario_id
-        """, (payload.correo.strip(), hash_seguro, payload.rol.strip()))
+        """, (
+            payload.correo,
+            hash_seguro,
+            payload.rol
+        ))
 
         nuevo_usuario_id = cur.fetchone()[0]
-        rol_limpio = payload.rol.lower().strip()
+        print("UUID GENERADO:", nuevo_usuario_id)
 
-        if rol_limpio in ["alumno", "estudiante"]:
+        # 2. EVALUAMOS EL ROL PARA VER EN QUÉ TABLA GUARDAR LOS NOMBRES
+        rol_limpio = payload.rol.lower()
+
+        # Crear alumno
+        if rol_limpio == "alumno" or rol_limpio == "estudiante":
+            if not payload.grado or not payload.seccion:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Los alumnos deben tener grado y sección."
+                )
+
             cur.execute("""
-                INSERT INTO estudiantes (estudiante_id, usuario_id, nombres, apellidos, grado, seccion)
-                VALUES (uuid_generate_v4(), %s, %s, %s, %s, %s)
-            """, (nuevo_usuario_id, payload.nombres.strip(), payload.apellidos.strip(), payload.grado.strip(), payload.seccion.strip()))
+                INSERT INTO estudiantes
+                (
+                    estudiante_id,
+                    usuario_id,
+                    nombres,
+                    apellidos,
+                    grado,
+                    seccion
+                )
+                VALUES
+                (
+                    uuid_generate_v4(),
+                    %s,
+                    %s,
+                    %s,
+                    %s,
+                    %s
+                )
+            """, (
+                nuevo_usuario_id,
+                payload.nombres,
+                payload.apellidos,
+                payload.grado,
+                payload.seccion
+            ))
+            print("Alumno insertado correctamente en la tabla 'estudiantes'")
 
+        # NUEVA LÓGICA: Si es Psicólogo, Tutor o Admin, guardamos en la tabla 'personal'
         elif rol_limpio in ["psicologo", "psicólogo", "tutor", "admin", "administrador"]:
             cur.execute("""
-                INSERT INTO personal (personal_id, usuario_id, nombres, apellidos)
-                VALUES (uuid_generate_v4(), %s, %s, %s)
-            """, (nuevo_usuario_id, payload.nombres.strip(), payload.apellidos.strip()))
+                INSERT INTO personal
+                (
+                    personal_id,
+                    usuario_id,
+                    nombres,
+                    apellidos
+                )
+                VALUES
+                (
+                    uuid_generate_v4(),
+                    %s,
+                    %s,
+                    %s
+                )
+            """, (
+                nuevo_usuario_id,
+                payload.nombres,
+                payload.apellidos
+            ))
+            print(f"Personal insertado correctamente en la tabla 'personal' con rol: {payload.rol}")
 
         conn.commit()
         cur.close()
         conn.close()
 
-        return {"status": "success", "mensaje": "Usuario creado correctamente"}
+        return {
+            "status": "success",
+            "mensaje": "Usuario creado correctamente"
+        }
+
+    except psycopg2.IntegrityError as e:
+        if conn:
+            conn.rollback()
+        print("\n===== ERROR SQL =====")
+        print(type(e))
+        print(str(e))
+        print("=====================\n")
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
     except Exception as e:
-        if conn: conn.rollback()
-        # Imprimir el error en consola para saber qué falló
-        print(f"DEBUG: Error al crear usuario: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        if conn:
+            conn.rollback()
+        print("\n===== ERROR GENERAL =====")
+        print(type(e))
+        print(str(e))
+        print("=========================\n")
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
+# =====================================================================
+# NUEVA RUTA PARA EL DOCENTE/PSICÓLOGO: OBTENER ALUMNOS, SECCIÓN E INTENTOS
+# =====================================================================
 @router.get("/api/psicologo/alumnos")
 async def obtener_alumnos_psicologo():
     conn = None
@@ -115,6 +215,8 @@ async def obtener_alumnos_psicologo():
         conn = get_db_connection()
         cur = conn.cursor()
         
+        # Hacemos un JOIN entre usuarios, estudiantes y contamos sus resultados
+        # CORRECCIÓN APLICADA AQUÍ: Agregamos u.usuario_id al final del SELECT
         cur.execute("""
             SELECT 
                 e.estudiante_id,
@@ -130,31 +232,57 @@ async def obtener_alumnos_psicologo():
         """)
         
         alumnos_db = cur.fetchall()
-        lista_alumnos = [
-            {"estudiante_id": str(a[0]), "nombres": a[1], "apellidos": a[2], "seccion": a[3], "intentos": a[4], "usuario_id": str(a[5])}
-            for a in alumnos_db
-        ]
+        lista_alumnos = []
         
-        return {"status": "success", "data": lista_alumnos}
+        for a in alumnos_db:
+            lista_alumnos.append({
+                "estudiante_id": str(a[0]),
+                "nombres": a[1],
+                "apellidos": a[2],
+                "seccion": a[3],
+                "intentos": a[4],
+                "usuario_id": str(a[5])  # CORRECCIÓN APLICADA AQUÍ: Enviamos el ID al Frontend
+            })
+            
+        return {
+            "status": "success",
+            "data": lista_alumnos
+        }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al cargar alumnos: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al cargar alumnos: {str(e)}"
+        )
     finally:
-        if cur: cur.close()
-        if conn: conn.close()
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
+# =====================================================================
+# NUEVA RUTA PARA ELIMINAR UN USUARIO
+# =====================================================================
 @router.delete("/api/usuarios/{usuario_id}")
 async def eliminar_usuario(usuario_id: str):
     conn = None
     try:
         conn = get_db_connection()
         cur = conn.cursor()
+
+        # 1. Borramos de las tablas hijas primero (para evitar errores de clave foránea)
         cur.execute("DELETE FROM estudiantes WHERE usuario_id = %s", (usuario_id,))
         cur.execute("DELETE FROM personal WHERE usuario_id = %s", (usuario_id,))
+        
+        # 2. Finalmente, borramos de la tabla principal
         cur.execute("DELETE FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+        
         conn.commit()
         cur.close()
         conn.close()
+        
         return {"status": "success", "mensaje": "Usuario eliminado correctamente"}
+
     except Exception as e:
-        if conn: conn.rollback()
+        if conn:
+            conn.rollback()
         raise HTTPException(status_code=500, detail=f"Error al eliminar usuario: {str(e)}")

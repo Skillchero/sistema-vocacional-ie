@@ -1,8 +1,3 @@
-// ====================================================================
-// CONFIGURACIÓN PROFESIONAL
-// ====================================================================
-const API_URL = "https://api-vocacional-cerna.onrender.com";
-
 document.addEventListener('DOMContentLoaded', () => {
     
     // =====================================================================
@@ -32,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =====================================================================
-    // LÓGICA DE BASE DE DATOS REAL (PYTHON + POSTGRESQL EN RENDER)
+    // LÓGICA DE BASE DE DATOS REAL (PYTHON + POSTGRESQL)
     // =====================================================================
     let todosLosAlumnos = []; 
 
@@ -46,8 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function cargarAlumnos() {
         try {
-            // USO DE LA CONSTANTE API_URL
-            const response = await fetch(`${API_URL}/api/psicologo/alumnos`);
+            const response = await fetch('http://localhost:8001/api/psicologo/alumnos');
             const result = await response.json();
 
             if (result.status === "success") {
@@ -59,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error("Error Fetch:", error);
-            mostrarError("No se pudo conectar al servidor de Render.");
+            mostrarError("No se pudo conectar al servidor Python (Verifica main.py).");
         }
     }
 
@@ -79,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const estadoTexto = tieneTest ? 'Completado' : 'Pendiente';
             const badgeClass = tieneTest ? 'badge completado' : 'badge pendiente';
             
+            // LLAMADA AL ENDPOINT: Enviamos alumno.usuario_id que requiere la API de historial
             const actionButton = tieneTest 
                 ? `<div style="text-align: center;"><button onclick="abrirInformePsicologo('${alumno.usuario_id}')" class="btn-ver" style="cursor: pointer; background: #3D52A0; color: white; border: none; padding: 5px 10px; border-radius: 5px;">Ver Informe</button></div>`
                 : `<div style="text-align: center;"><span class="txt-null" style="color: #999;">Pendiente</span></div>`;
@@ -133,32 +128,34 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // =====================================================================
-// CONSUMO DE LA API DE HISTORIAL PARA EL PSICÓLOGO
+// CONSUMO DE LA API DE HISTORIAL REAL DESDE EL DASHBOARD DEL PSICÓLOGO
 // =====================================================================
 async function abrirInformePsicologo(usuarioId) { 
     const modalInforme = document.getElementById('modal-informe');
     const cuerpoInforme = document.getElementById('modal-cuerpo-informe');
     const campoFecha = document.getElementById('modal-fecha');
 
+    // Cambiamos el display del modal a activo usando estilos en línea (flex)
     if (modalInforme) {
         modalInforme.style.display = 'flex';
     }
     
-    cuerpoInforme.innerHTML = '<div style="text-align:center; padding: 40px;"><i class="fas fa-spinner fa-spin fa-3x" style="color:#3D52A0;"></i><br><br>Obteniendo informe de la nube...</div>';
+    cuerpoInforme.innerHTML = '<div style="text-align:center; padding: 40px;"><i class="fas fa-spinner fa-spin fa-3x" style="color:#3D52A0;"></i><br><br>Obteniendo informe de la base de datos...</div>';
     campoFecha.innerText = '--/--/----';
 
     try {
-        // USO DE LA CONSTANTE API_URL
-        const respuesta = await fetch(`${API_URL}/api/historial/${usuarioId}`);
+        // Ejecuta la consulta directa a tu API usando el ID de la cuenta del alumno
+        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${usuarioId}`);
         const datos = await respuesta.json();
 
         if (respuesta.ok && datos.length > 0) {
-            const registro = datos[0]; 
+            const registro = datos[0]; // Tomamos el test más reciente
             
             campoFecha.innerText = new Date(registro.fecha_evaluacion).toLocaleDateString('es-PE', {
                 day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
 
+            // Parseamos y dibujamos el informe de la IA tal como lo hace tu alumno.js
             let informeIA = registro.informe_ia;
             if (typeof informeIA === 'string') {
                 try { informeIA = JSON.parse(informeIA); } catch(e) {}
@@ -187,12 +184,12 @@ async function abrirInformePsicologo(usuarioId) {
 
             cuerpoInforme.innerHTML = htmlContenido;
         } else {
-            cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Este estudiante no tiene un informe válido generado por la IA.</p>";
+            cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Este estudiante no tiene un informe válido generado por la IA en su historial.</p>";
         }
 
     } catch (error) {
         console.error("Error al cargar el historial:", error);
-        cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Error al conectar con el servidor.</p>";
+        cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Error al conectar con el servidor. Verifica que main.py esté encendido.</p>";
     }
 }
 

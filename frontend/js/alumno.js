@@ -1,8 +1,3 @@
-// ====================================================================
-// CONFIGURACIÓN CENTRALIZADA
-// ====================================================================
-const API_URL = "https://api-vocacional-cerna.onrender.com";
-
 // Variable global temporal para guardar los registros del historial cargados
 let listaHistorialGlobal = [];
 
@@ -62,8 +57,8 @@ async function verificarEstadoHistorial() {
     if (!idUsuario) return;
 
     try {
-        // USO DE LA CONSTANTE PROFESIONAL
-        const respuesta = await fetch(`${API_URL}/api/historial/${idUsuario}`);
+        // ¡PUERTO CORREGIDO A 8001!
+        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${idUsuario}`);
         
         if (!respuesta.ok) {
             console.warn("No se pudo conectar al historial. Código:", respuesta.status);
@@ -80,10 +75,11 @@ async function verificarEstadoHistorial() {
         if (datos && datos.length > 0) {
             if (tarjeta) {
                 tarjeta.classList.remove('locked');
-                tarjeta.onclick = mostrarHistorial; 
+                tarjeta.onclick = mostrarHistorial; // Le damos la habilidad de hacer clic
             }
             
             if (btnVer) {
+                // Cambiamos el diseño del botón al dorado activo
                 btnVer.className = 'btn-primary';
                 btnVer.style.backgroundColor = 'var(--dorado-principal)';
                 btnVer.innerText = 'Ver mi Historial';
@@ -91,6 +87,7 @@ async function verificarEstadoHistorial() {
             }
             
             if (msgBloqueo) {
+                // Ocultamos el mensaje rojo de "Disponible al terminar..."
                 msgBloqueo.style.display = 'none';
             }
         }
@@ -104,12 +101,15 @@ async function verificarEstadoHistorial() {
 // 2. ABRIR EL HISTORIAL DESDE LA TARJETA
 // =======================================================
 function mostrarHistorial() {
+    // Ocultar las tarjetas principales
     document.getElementById('vista-menu').classList.remove('vista-activa');
     document.getElementById('vista-menu').classList.add('vista-oculta');
 
+    // Mostrar el historial
     document.getElementById('vista-historial').classList.remove('vista-oculta');
     document.getElementById('vista-historial').classList.add('vista-activa');
 
+    // Cargar los datos desde la base de datos al abrir la vista
     cargarHistorialAlumno();
 }
 
@@ -117,6 +117,7 @@ function mostrarHistorial() {
 // 3. CARGAR EL HISTORIAL DESDE LA BASE DE DATOS
 // =======================================================
 async function cargarHistorialAlumno() {
+    // Jalamos el ID del usuario
     const idUsuario = localStorage.getItem('usuario_id'); 
     const contenedor = document.getElementById('contenedor-historial');
 
@@ -126,23 +127,27 @@ async function cargarHistorialAlumno() {
     }
 
     try {
-        // USO DE LA CONSTANTE PROFESIONAL
-        const respuesta = await fetch(`${API_URL}/api/historial/${idUsuario}`);
+        // ¡PUERTO CORREGIDO A 8001!
+        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${idUsuario}`);
         const datos = await respuesta.json();
 
+        // Guardamos en la variable global para no volver a consultar a la BD al abrir el pop-up
         listaHistorialGlobal = datos;
-        contenedor.innerHTML = ''; 
+        contenedor.innerHTML = ''; // Limpiamos el contenedor
 
         if (!datos || datos.length === 0) {
             contenedor.innerHTML = `<p class="alerta-vacio">Aún no has resuelto el test vocacional. ¡Anímate a comenzar!</p>`;
             return;
         }
 
+        // Pintar las tarjetas por cada registro
         datos.forEach((item, indice) => {
+            // Formatear la fecha
             const fechaFormateada = new Date(item.fecha_evaluacion).toLocaleDateString('es-PE', {
                 day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
 
+            // Número de la evaluación
             const numEvaluacion = datos.length - indice;
 
             const tarjeta = document.createElement('div');
@@ -159,7 +164,7 @@ async function cargarHistorialAlumno() {
 
     } catch (error) {
         console.error("Error al cargar el historial:", error);
-        contenedor.innerHTML = '<p class="alerta-vacio" style="color: red;">Error al conectar con el servidor de la nube.</p>';
+        contenedor.innerHTML = '<p class="alerta-vacio" style="color: red;">Error al conectar con el servidor.</p>';
     }
 }
 
@@ -174,13 +179,16 @@ function verDetalleHistorial(indice) {
     const cuerpoInforme = document.getElementById('modal-cuerpo-informe');
     const campoFecha = document.getElementById('modal-fecha');
 
+    // 1. Mostrar la fecha en el modal
     campoFecha.innerText = new Date(registro.fecha_evaluacion).toLocaleDateString('es-PE');
 
+    // 2. Parsear el informe IA
     let informeIA = registro.informe_ia;
     if (typeof informeIA === 'string') {
         try { informeIA = JSON.parse(informeIA); } catch(e) {}
     }
 
+    // 3. Dibujar el contenido dinámicamente según lo que envíe Gemini
     let htmlContenido = '';
     
     if (typeof informeIA === 'object' && informeIA !== null) {
@@ -209,9 +217,12 @@ function verDetalleHistorial(indice) {
     }
 
     cuerpoInforme.innerHTML = htmlContenido;
+
+    // 4. Mostrar el modal añadiendo la clase active
     modalInforme.classList.add('active');
 }
 
+// Función para cerrar el Visor del Informe IA
 function cerrarVisorInforme() {
     document.getElementById('modal-informe').classList.remove('active');
 }
