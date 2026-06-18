@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Solo ejecutamos la petición si estamos en la pantalla que tiene la tabla (admin_dashboard.html)
     if (tbody) {
         try {
-            const response = await fetch('http://localhost:8001/api/usuarios'); // Asegúrate que el puerto sea el correcto
+            // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ!
+            const response = await fetch('https://api-vocacional-cerna.onrender.com/api/usuarios'); 
             const result = await response.json();
 
             // Verificamos "success" porque así lo configuramos en el backend (Paso 1)
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         } catch (error) {
             console.error("No se pudo conectar al servidor backend.", error);
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">No se pudo conectar al servidor Python. Verifica que main.py esté encendido.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">No se pudo conectar al servidor Python de Render.</td></tr>`;
         }
     }
 });
@@ -84,8 +85,8 @@ async function borrarUsuario(idUsuario) {
     
     if (confirmacion) {
         try {
-            // 2. Llamamos a la API de Python con el método DELETE
-            const response = await fetch(`http://localhost:8001/api/usuarios/${idUsuario}`, {
+            // 2. ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ! (Llamamos a la API con método DELETE)
+            const response = await fetch(`https://api-vocacional-cerna.onrender.com/api/usuarios/${idUsuario}`, {
                 method: 'DELETE'
             });
             
@@ -100,7 +101,7 @@ async function borrarUsuario(idUsuario) {
             }
         } catch (error) {
             console.error("Error de conexión:", error);
-            alert("No se pudo conectar al servidor. Verifica que main.py esté corriendo en el puerto 8001.");
+            alert("No se pudo conectar al servidor de Render.");
         }
     }
 }
@@ -142,7 +143,8 @@ if (crearUsuarioForm) {
         btnSave.disabled = true;
 
         try {
-            const response = await fetch('http://localhost:8001/api/crear-usuario', {
+            // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ!
+            const response = await fetch('https://api-vocacional-cerna.onrender.com/api/crear-usuario', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -170,7 +172,7 @@ if (crearUsuarioForm) {
 
         } catch (error) {
             console.error("Error:", error);
-            alert("No se pudo conectar al servidor Python. Verifica que main.py esté corriendo en el puerto 8001.");
+            alert("No se pudo conectar al servidor de Render.");
             btnSave.innerText = "Registrar Usuario";
             btnSave.disabled = false;
         }

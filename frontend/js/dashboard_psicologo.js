@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =====================================================================
-    // LÓGICA DE BASE DE DATOS REAL (PYTHON + POSTGRESQL)
+    // LÓGICA DE BASE DE DATOS REAL (PYTHON + POSTGRESQL EN RENDER)
     // =====================================================================
     let todosLosAlumnos = []; 
 
@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function cargarAlumnos() {
         try {
-            const response = await fetch('http://localhost:8001/api/psicologo/alumnos');
+            // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ!
+            const response = await fetch('https://api-vocacional-cerna.onrender.com/api/psicologo/alumnos');
             const result = await response.json();
 
             if (result.status === "success") {
@@ -53,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error("Error Fetch:", error);
-            mostrarError("No se pudo conectar al servidor Python (Verifica main.py).");
+            mostrarError("No se pudo conectar al servidor de Render.");
         }
     }
 
@@ -140,12 +141,12 @@ async function abrirInformePsicologo(usuarioId) {
         modalInforme.style.display = 'flex';
     }
     
-    cuerpoInforme.innerHTML = '<div style="text-align:center; padding: 40px;"><i class="fas fa-spinner fa-spin fa-3x" style="color:#3D52A0;"></i><br><br>Obteniendo informe de la base de datos...</div>';
+    cuerpoInforme.innerHTML = '<div style="text-align:center; padding: 40px;"><i class="fas fa-spinner fa-spin fa-3x" style="color:#3D52A0;"></i><br><br>Obteniendo informe de la nube...</div>';
     campoFecha.innerText = '--/--/----';
 
     try {
-        // Ejecuta la consulta directa a tu API usando el ID de la cuenta del alumno
-        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${usuarioId}`);
+        // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ TAMBIÉN!
+        const respuesta = await fetch(`https://api-vocacional-cerna.onrender.com/api/historial/${usuarioId}`);
         const datos = await respuesta.json();
 
         if (respuesta.ok && datos.length > 0) {
@@ -189,7 +190,7 @@ async function abrirInformePsicologo(usuarioId) {
 
     } catch (error) {
         console.error("Error al cargar el historial:", error);
-        cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Error al conectar con el servidor. Verifica que main.py esté encendido.</p>";
+        cuerpoInforme.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Error al conectar con el servidor de Render.</p>";
     }
 }
 

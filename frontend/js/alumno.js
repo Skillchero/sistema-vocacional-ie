@@ -57,8 +57,8 @@ async function verificarEstadoHistorial() {
     if (!idUsuario) return;
 
     try {
-        // ¡PUERTO CORREGIDO A 8001!
-        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${idUsuario}`);
+        // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ!
+        const respuesta = await fetch(`https://api-vocacional-cerna.onrender.com/api/historial/${idUsuario}`);
         
         if (!respuesta.ok) {
             console.warn("No se pudo conectar al historial. Código:", respuesta.status);
@@ -127,8 +127,8 @@ async function cargarHistorialAlumno() {
     }
 
     try {
-        // ¡PUERTO CORREGIDO A 8001!
-        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${idUsuario}`);
+        // ¡URL OFICIAL DE RENDER ACTUALIZADA AQUÍ TAMBIÉN!
+        const respuesta = await fetch(`https://api-vocacional-cerna.onrender.com/api/historial/${idUsuario}`);
         const datos = await respuesta.json();
 
         // Guardamos en la variable global para no volver a consultar a la BD al abrir el pop-up
@@ -164,7 +164,7 @@ async function cargarHistorialAlumno() {
 
     } catch (error) {
         console.error("Error al cargar el historial:", error);
-        contenedor.innerHTML = '<p class="alerta-vacio" style="color: red;">Error al conectar con el servidor.</p>';
+        contenedor.innerHTML = '<p class="alerta-vacio" style="color: red;">Error al conectar con el servidor de Render.</p>';
     }
 }
 
