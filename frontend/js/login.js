@@ -1,5 +1,5 @@
 // Constante global para conectar con el servidor en la nube
-const API_URL = 'postgresql://vocacional_db_user:Ri1D1p14Vg5z3YRS8C6bZtG0lBEpBE36@dpg-d8pbqcbeo5us73acl120-a.ohio-postgres.render.com/vocacional_db';
+const API_URL = 'https://api-vocacional-cerna.onrender.com';
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
 
