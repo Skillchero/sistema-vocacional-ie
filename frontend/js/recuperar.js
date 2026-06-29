@@ -1,7 +1,5 @@
-// Constante de tu API (Asegúrate de que sea el puerto de tu servidor local o Render)
-// Como dijimos que sería local, asumo que usas tu puerto 8001
-const API_URL = "http://localhost:8001"; // Cámbialo si estás usando Render en pruebas
-
+// Constante global para conectar con el servidor en la nube
+const API_URL = 'postgresql://vocacional_db_user:Ri1D1p14Vg5z3YRS8C6bZtG0lBEpBE36@dpg-d8pbqcbeo5us73acl120-a.ohio-postgres.render.com/vocacional_db';
 document.getElementById('recoveryForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     

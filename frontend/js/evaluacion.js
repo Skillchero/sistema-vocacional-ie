@@ -1,3 +1,5 @@
+// Constante global para conectar con el servidor en la nube
+const API_URL = 'postgresql://vocacional_db_user:Ri1D1p14Vg5z3YRS8C6bZtG0lBEpBE36@dpg-d8pbqcbeo5us73acl120-a.ohio-postgres.render.com/vocacional_db';
 document.addEventListener('DOMContentLoaded', () => {
     // Batería de 15 Preguntas
     const preguntas = [
@@ -159,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8001/api/guardar-respuestas', {
+            const response = await fetch(`${API_URL}/api/guardar-respuestas`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 

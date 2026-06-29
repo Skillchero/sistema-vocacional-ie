@@ -1,3 +1,5 @@
+// Constante global para conectar con el servidor en la nube
+const API_URL = 'postgresql://vocacional_db_user:Ri1D1p14Vg5z3YRS8C6bZtG0lBEpBE36@dpg-d8pbqcbeo5us73acl120-a.ohio-postgres.render.com/vocacional_db';
 // Variable global temporal para guardar los registros del historial cargados
 let listaHistorialGlobal = [];
 
@@ -58,7 +60,7 @@ async function verificarEstadoHistorial() {
 
     try {
         // ¡PUERTO CORREGIDO A 8001!
-        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${idUsuario}`);
+        const respuesta = await fetch(`${API_URL}/api/historial/${idUsuario}`);
         
         if (!respuesta.ok) {
             console.warn("No se pudo conectar al historial. Código:", respuesta.status);
@@ -128,7 +130,7 @@ async function cargarHistorialAlumno() {
 
     try {
         // ¡PUERTO CORREGIDO A 8001!
-        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${idUsuario}`);
+        const respuesta = await fetch(`${API_URL}/api/historial/${idUsuario}`);
         const datos = await respuesta.json();
 
         // Guardamos en la variable global para no volver a consultar a la BD al abrir el pop-up

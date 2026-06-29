@@ -1,3 +1,5 @@
+// Constante global para conectar con el servidor en la nube
+const API_URL = 'postgresql://vocacional_db_user:Ri1D1p14Vg5z3YRS8C6bZtG0lBEpBE36@dpg-d8pbqcbeo5us73acl120-a.ohio-postgres.render.com/vocacional_db';
 document.addEventListener('DOMContentLoaded', () => {
     
     // =====================================================================
@@ -41,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function cargarAlumnos() {
         try {
-            const response = await fetch('http://localhost:8001/api/psicologo/alumnos');
+            const response = await fetch(`${API_URL}/api/psicologo/alumnos`);
             const result = await response.json();
 
             if (result.status === "success") {
@@ -145,7 +147,7 @@ async function abrirInformePsicologo(usuarioId) {
 
     try {
         // Ejecuta la consulta directa a tu API usando el ID de la cuenta del alumno
-        const respuesta = await fetch(`http://127.0.0.1:8001/api/historial/${usuarioId}`);
+        const respuesta = await fetch(`${API_URL}/api/historial/${usuarioId}`);
         const datos = await respuesta.json();
 
         if (respuesta.ok && datos.length > 0) {

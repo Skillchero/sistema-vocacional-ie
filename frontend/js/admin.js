@@ -1,3 +1,5 @@
+// Constante global para conectar con el servidor en la nube
+const API_URL = 'postgresql://vocacional_db_user:Ri1D1p14Vg5z3YRS8C6bZtG0lBEpBE36@dpg-d8pbqcbeo5us73acl120-a.ohio-postgres.render.com/vocacional_db';
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Panel de Administrador cargado correctamente.");
 
@@ -40,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Solo ejecutamos la petición si estamos en la pantalla que tiene la tabla (admin_dashboard.html)
     if (tbody) {
         try {
-            const response = await fetch('http://localhost:8001/api/usuarios'); // Asegúrate que el puerto sea el correcto
+            const response = await fetch(`${API_URL}/api/usuarios`); //conectamos con la API de base de datos en la nube
             const result = await response.json();
 
             // Verificamos "success" porque así lo configuramos en el backend (Paso 1)
@@ -126,7 +128,7 @@ if (formModificar) {
         };
 
         try {
-            const response = await fetch(`http://localhost:8001/api/usuarios/${idUsuario}`, {
+            const response = await fetch(`${API_URL}/api/usuarios/${idUsuario}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataActualizada)
@@ -161,7 +163,7 @@ async function borrarUsuario(idUsuario) {
     if (confirmacion) {
         try {
             // 2. Llamamos a la API de Python con el método DELETE
-            const response = await fetch(`http://localhost:8001/api/usuarios/${idUsuario}`, {
+            const response = await fetch(`${API_URL}/api/usuarios/${idUsuario}`, {
                 method: 'DELETE'
             });
             
@@ -218,7 +220,7 @@ if (crearUsuarioForm) {
         btnSave.disabled = true;
 
         try {
-            const response = await fetch('http://localhost:8001/api/crear-usuario', {
+            const response = await fetch(`${API_URL}/api/crear-usuario`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -268,7 +270,7 @@ async function restablecerClave(idUsuario, usuarioCorreo) {
 
     // 2. Conectamos con el backend para guardar la nueva clave
     try {
-        const response = await fetch(`http://localhost:8001/api/usuarios/${idUsuario}/password`, {
+        const response = await fetch(`${API_URL}/api/usuarios/${idUsuario}/password`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: nuevaClave })
@@ -303,7 +305,7 @@ async function restablecerClave(idUsuario, usuarioCorreo) {
 // 1. Función para cargar las notificaciones desde la BD
 async function cargarNotificaciones() {
     try {
-        const response = await fetch('http://localhost:8001/api/notificaciones-pendientes');
+        const response = await fetch(`${API_URL}/api/notificaciones-pendientes`);
         const data = await response.json();
 
         if (data.status === 'success') {
@@ -346,7 +348,7 @@ async function cargarNotificaciones() {
 async function atenderNotificacion(id, correo) {
     if(confirm(`¿Ya cambiaste la contraseña de ${correo} usando el botón Modificar (✏️) en la tabla principal?\n\nSi es así, presiona Aceptar para borrar esta notificación.`)) {
         try {
-            const response = await fetch(`http://localhost:8001/api/notificaciones-atendidas/${id}`, {
+            const response = await fetch(`${API_URL}/api/notificaciones-atendidas/${id}`, {
                 method: 'PUT'
             });
             const data = await response.json();
