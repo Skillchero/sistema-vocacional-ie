@@ -3,12 +3,19 @@
 # Módulo de Inteligencia Artificial y Procesamiento Lógico
 # =====================================================================
 
+import os
 import json
+from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+# Cargar las variables del archivo .env (esto hace que funcione en tu compu local)
+load_dotenv()
+
 # 1. CONFIGURACIÓN DE CONEXIÓN A LA API
-API_KEY = "AIzaSyDVCs36Z3EDkpi_qHssLk76_dr0AXFLSu0" # Mantén tu clave
+# En lugar de texto plano, le decimos a Python que busque la llave "GEMINI_API_KEY"
+API_KEY = os.getenv("GEMINI_API_KEY") 
+
 cliente = genai.Client(api_key=API_KEY)
 
 # =====================================================================
@@ -42,7 +49,7 @@ def generar_recomendacion_vocacional(nombre_alumno, respuestas_test, sueno_profe
     
     {{
         "saludo": "¡Hola, {nombre_alumno}! Es un gusto para mí...",
-        "perfil": "Aquí redacta el análisis de sus fortalezas y perfil basado en sus respuestas.",
+        "perfil": "Aquí redacta el análisis de sus fortalezas y perfil basado en sus respuestas, pero no nombres las preguntas solo da el análisis.",
         "carreras_sugeridas": [
             {{
                 "titulo": "Nombre de Carrera 1 (Institución sugerida)",

@@ -36,11 +36,12 @@
                     <h3>Total Usuarios Registrados</h3>
                     <p class="number" id="total-usuarios">--</p>
                 </div>
-                <div class="metric-card alert-card">
+                
+                <div class="metric-card alert-card" id="tarjeta-alertas" style="cursor: pointer;" title="Clic para ver solicitudes">
                     <h3>Solicitudes de Contraseña</h3>
-                    <p class="number">3 pendientes</p>
+                    <p class="number" id="contador-alertas">0 pendientes</p>
                 </div>
-            </section>
+                </section>
 
             <section class="table-section">
                 <div class="table-header">
@@ -65,6 +66,50 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <div id="modal-notificaciones" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 10% auto; padding: 20px; width: 50%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+            <span id="cerrar-notificaciones" style="float: right; font-size: 24px; font-weight: bold; cursor: pointer; color: red;">&times;</span>
+            <h2>📬 Solicitudes de Recuperación de Clave</h2>
+            <p>A estos alumnos debes cambiarles la clave manualmente desde la tabla a una genérica (Ej. su DNI).</p>
+            <hr>
+            <div id="lista-notificaciones" style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                </div>
+        </div>
+    </div>
+
+    <div id="modal-modificar" class="modal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6);">
+        <div style="background-color: white; margin: 10% auto; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+            <h3 style="color: #3D52A0; margin-bottom: 20px; border-bottom: 2px solid #EEF0F9; padding-bottom: 10px;">
+                <i class="fas fa-edit"></i> Modificar Datos del Usuario
+            </h3>
+            
+            <form id="form-modificar-usuario">
+                <input type="hidden" id="mod-id">
+                <input type="hidden" id="mod-rol">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; color: #333;">Nombres:</label><br>
+                    <input type="text" id="mod-nombres" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; color: #333;">Apellidos:</label><br>
+                    <input type="text" id="mod-apellidos" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: bold; color: #333;">Correo Electrónico:</label><br>
+                    <input type="email" id="mod-correo" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="document.getElementById('modal-modificar').style.display='none'" style="padding: 10px 20px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancelar</button>
+                    <button type="submit" id="btn-guardar-cambios" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="js/admin.js"></script>

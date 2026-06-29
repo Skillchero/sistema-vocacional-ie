@@ -286,3 +286,93 @@ async def eliminar_usuario(usuario_id: str):
         if conn:
             conn.rollback()
         raise HTTPException(status_code=500, detail=f"Error al eliminar usuario: {str(e)}")
+
+        # ====================================================================
+# NUEVO: RUTA PARA RESTABLECER CONTRASEÑA DEL USUARIO
+# ====================================================================
+class UpdatePasswordPayload(BaseModel):
+    password: str
+
+@router.put("/api/usuarios/{usuario_id}/password")
+async def actualizar_password(usuario_id: str, payload: UpdatePasswordPayload):
+    conn = None
+    cur = None
+    try:
+        # 1. Encriptamos la nueva contraseña que escribió el Admin
+        hash_seguro = pwd_context.hash(payload.password)
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # 2. Actualizamos la base de datos
+        cur.execute("""
+            UPDATE usuarios
+            SET password_hash = %s
+            WHERE usuario_id = %s
+        """, (hash_seguro, usuario_id))
+
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado en la base de datos")
+
+        conn.commit()
+        return {"status": "success", "message": "Contraseña actualizada correctamente"}
+    
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        raise HTTPException(status_code=500, detail=f"Error al actualizar la contraseña: {str(e)}")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+            # ====================================================================
+# NUEVO: RUTA PARA ACTUALIZAR DATOS DEL USUARIO
+# ====================================================================
+class ActualizarUsuarioPayload(BaseModel):
+    nombres: str
+    apellidos: str
+    correo: str
+    rol: str
+
+@router.put("/api/usuarios/{usuario_id}")
+async def actualizar_datos_usuario(usuario_id: str, payload: ActualizarUsuarioPayload):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # 1. Actualizamos el correo y rol en la tabla principal de usuarios
+        cur.execute("""
+            UPDATE usuarios 
+            SET email = %s, rol = %s 
+            WHERE usuario_id = %s
+        """, (payload.correo, payload.rol, usuario_id))
+
+        # 2. Actualizamos nombres y apellidos dependiendo de si es alumno o personal
+        if payload.rol.lower() == 'alumno':
+            cur.execute("""
+                UPDATE estudiantes 
+                SET nombres = %s, apellidos = %s 
+                WHERE usuario_id = %s
+            """, (payload.nombres, payload.apellidos, usuario_id))
+        else:
+            cur.execute("""
+                UPDATE personal 
+                SET nombres = %s, apellidos = %s 
+                WHERE usuario_id = %s
+            """, (payload.nombres, payload.apellidos, usuario_id))
+
+        conn.commit()
+        return {"status": "success", "message": "Datos modificados correctamente"}
+    
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        raise HTTPException(status_code=500, detail=f"Error al actualizar: {str(e)}")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()

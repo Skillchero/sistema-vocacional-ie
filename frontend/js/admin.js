@@ -11,6 +11,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     // ====================================================================
 
+    // ====================================================================
+    // FASE 3: LÓGICA DE NOTIFICACIONES (BUZÓN DE CONTRASEÑAS)
+    // ====================================================================
+    cargarNotificaciones(); // Cargar la alerta apenas entras al panel
+
+    const tarjeta = document.getElementById('tarjeta-alertas');
+    const modalNotificaciones = document.getElementById('modal-notificaciones');
+    const btnCerrarNotificaciones = document.getElementById('cerrar-notificaciones');
+
+    if(tarjeta && modalNotificaciones) {
+        tarjeta.addEventListener('click', () => {
+            modalNotificaciones.style.display = 'block';
+        });
+    }
+
+    if(btnCerrarNotificaciones && modalNotificaciones) {
+        btnCerrarNotificaciones.addEventListener('click', () => {
+            modalNotificaciones.style.display = 'none';
+        });
+    }
+    // ====================================================================
+
     // === LÓGICA: OBTENER USUARIOS DESDE POSTGRESQL ===
     const tbody = document.getElementById('tabla-usuarios-body');
     const contadorTotal = document.getElementById('total-usuarios');
@@ -46,13 +68,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <td>${usuario.email}</td>
                         <td><span class="badge ${badgeClass}">${usuario.rol.toUpperCase()}</span></td>
                         <td style="display: flex; gap: 5px; justify-content: center;">
-                            <button class="btn-action" style="background-color: #ffc107; color: #000; padding: 5px 10px;" onclick="modificarUsuario('${usuario.id_usuario}')" title="Modificar">
+                            <button class="btn-action" style="background-color: #ffc107; color: #000; padding: 5px 10px;" onclick="modificarUsuario('${usuario.id_usuario}', '${usuario.nombres}', '${usuario.apellidos}', '${usuario.email}', '${usuario.rol}')" title="Modificar">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn-action" style="background-color: #dc3545; color: #fff; padding: 5px 10px;" onclick="borrarUsuario('${usuario.id_usuario}')" title="Borrar">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <button class="btn-action" style="padding: 5px 10px;" onclick="restablecerClave('${usuario.email}')" title="Restablecer Clave">
+                            <button class="btn-action" style="padding: 5px 10px;" onclick="restablecerClave('${usuario.id_usuario}', '${usuario.email}')" title="Restablecer Clave">
                                 <i class="fas fa-key"></i>
                             </button>
                         </td>
@@ -71,13 +93,67 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ====================================================================
-// Funciones para los Botones de Acciones (Modificar / Borrar)
+// Funciones REALES para Modificar Usuario
 // ====================================================================
-function modificarUsuario(id) {
-    // Aquí a futuro programaremos la apertura de una ventana modal o redirección
-    alert(`Preparando para modificar al usuario con ID:\n${id}\n\n(Próximamente abriremos un formulario con sus datos precargados)`);
+
+// 1. Abre el modal e inyecta los datos actuales
+function modificarUsuario(id, nombres, apellidos, correo, rol) {
+    document.getElementById('mod-id').value = id;
+    document.getElementById('mod-nombres').value = nombres;
+    document.getElementById('mod-apellidos').value = apellidos;
+    document.getElementById('mod-correo').value = correo;
+    document.getElementById('mod-rol').value = rol;
+    
+    document.getElementById('modal-modificar').style.display = 'block';
 }
 
+// 2. Conecta el formulario con el backend para guardar cambios
+const formModificar = document.getElementById('form-modificar-usuario');
+if (formModificar) {
+    formModificar.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btnGuardar = document.getElementById('btn-guardar-cambios');
+        btnGuardar.innerText = "Guardando...";
+        btnGuardar.disabled = true;
+
+        const idUsuario = document.getElementById('mod-id').value;
+        const dataActualizada = {
+            nombres: document.getElementById('mod-nombres').value,
+            apellidos: document.getElementById('mod-apellidos').value,
+            correo: document.getElementById('mod-correo').value,
+            rol: document.getElementById('mod-rol').value
+        };
+
+        try {
+            const response = await fetch(`http://localhost:8001/api/usuarios/${idUsuario}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataActualizada)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.status === 'success') {
+                alert("✅ ¡Datos del usuario actualizados correctamente!");
+                document.getElementById('modal-modificar').style.display = 'none';
+                window.location.reload(); // Recargamos para ver los cambios en la tabla
+            } else {
+                alert(`Error al actualizar: ${result.detail}`);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error de conexión con el servidor.");
+        } finally {
+            btnGuardar.innerText = "Guardar Cambios";
+            btnGuardar.disabled = false;
+        }
+    });
+}
+
+// ====================================================================
+// Funciones para Borrar Usuario
+// ====================================================================
 async function borrarUsuario(idUsuario) {
     // 1. Alerta de confirmación para evitar borrados por accidente
     const confirmacion = confirm(`¿Estás completamente seguro de que deseas eliminar al usuario con ID: ${idUsuario.substring(0,8)}...? \n\nEsta acción no se puede deshacer.`);
@@ -178,22 +254,109 @@ if (crearUsuarioForm) {
 }
 
 // ====================================================================
-// Función para simular el restablecimiento de clave (Se mantiene intacta)
+// Función REAL para restablecer clave de usuario
 // ====================================================================
-function restablecerClave(usuarioCorreo) {
-    // Alerta de confirmación de navegador
-    const confirmacion = confirm(`¿Estás seguro de que deseas restablecer la contraseña para el usuario: ${usuarioCorreo}?`);
-    
-    if(confirmacion) {
-        // Aquí en el futuro llamaremos a nuestra API de FastAPI
-        alert(`¡Éxito! Se ha generado una nueva contraseña temporal para ${usuarioCorreo} y se ha actualizado en la base de datos.`);
-        
-        // Simulación visual: si el botón decía "Atender Solicitud", lo cambiamos a estado normal
-        if(event && event.target) {
-            event.target.classList.remove('btn-urgent');
-            event.target.innerText = 'Clave Restablecida';
-            event.target.disabled = true;
-            event.target.style.opacity = '0.5';
+async function restablecerClave(idUsuario, usuarioCorreo) {
+    // 1. Abrimos una ventana nativa para que el Admin escriba la clave
+    const nuevaClave = prompt(`Restablecer contraseña para:\n${usuarioCorreo}\n\nIngrese la nueva contraseña (Ej: Número de DNI o Cerna2026):`);
+
+    // Si el Admin presiona "Cancelar" o deja el campo vacío, detenemos todo
+    if (!nuevaClave || nuevaClave.trim() === "") {
+        alert("Operación cancelada. No se realizó ningún cambio.");
+        return;
+    }
+
+    // 2. Conectamos con el backend para guardar la nueva clave
+    try {
+        const response = await fetch(`http://localhost:8001/api/usuarios/${idUsuario}/password`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: nuevaClave })
+        });
+
+        const result = await response.json();
+
+        // 3. Evaluamos la respuesta de la base de datos
+        if (response.ok && result.status === 'success') {
+            alert(`✅ ¡Éxito! La contraseña para ${usuarioCorreo} ha sido cambiada a:\n\n${nuevaClave}\n\nPor favor, indique al usuario que inicie sesión con esta clave.`);
+            
+            // Simulación visual: Desactivar el botón para indicar que ya se atendió
+            if (event && event.target) {
+                event.target.classList.remove('btn-urgent');
+                event.target.innerText = 'Clave Restablecida';
+                event.target.disabled = true;
+                event.target.style.opacity = '0.5';
+            }
+        } else {
+            alert(`Error al guardar la contraseña: ${result.detail}`);
+        }
+    } catch (error) {
+        console.error("Error de conexión:", error);
+        alert("No se pudo conectar al servidor. Verifica que main.py esté encendido en el puerto 8001.");
+    }
+}
+
+// ====================================================================
+// FASE 3: FUNCIONES PARA EL BUZÓN DE NOTIFICACIONES (CONTRASEÑAS)
+// ====================================================================
+
+// 1. Función para cargar las notificaciones desde la BD
+async function cargarNotificaciones() {
+    try {
+        const response = await fetch('http://localhost:8001/api/notificaciones-pendientes');
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            const numPendientes = data.notificaciones.length;
+            
+            // Actualizamos el número en la tarjeta HTML
+            const contadorAlertas = document.getElementById('contador-alertas');
+            if (contadorAlertas) {
+                contadorAlertas.innerText = `${numPendientes} pendientes`;
+            }
+            
+            // Llenamos la ventana Modal
+            const lista = document.getElementById('lista-notificaciones');
+            if (lista) {
+                lista.innerHTML = ""; // Limpiamos lo anterior
+
+                if (numPendientes === 0) {
+                    lista.innerHTML = "<p style='text-align:center; color:gray;'>No hay solicitudes nuevas. ¡Todo al día!</p>";
+                } else {
+                    data.notificaciones.forEach(noti => {
+                        lista.innerHTML += `
+                            <div style="background: #f9f9f9; padding: 15px; margin-bottom: 10px; border-left: 4px solid #d9534f; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong style="color:#333;">${noti.correo}</strong><br>
+                                    <small style="color: #777;">Fecha: ${noti.fecha}</small>
+                                </div>
+                                <button onclick="atenderNotificacion(${noti.id}, '${noti.correo}')" style="background: #28a745; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">✅ Marcar Lista</button>
+                            </div>
+                        `;
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error al cargar notificaciones:", error);
+    }
+}
+
+// 2. Función para marcar una notificación como atendida
+async function atenderNotificacion(id, correo) {
+    if(confirm(`¿Ya cambiaste la contraseña de ${correo} usando el botón Modificar (✏️) en la tabla principal?\n\nSi es así, presiona Aceptar para borrar esta notificación.`)) {
+        try {
+            const response = await fetch(`http://localhost:8001/api/notificaciones-atendidas/${id}`, {
+                method: 'PUT'
+            });
+            const data = await response.json();
+            
+            if(data.status === 'success') {
+                alert("¡Notificación atendida correctamente!");
+                cargarNotificaciones(); // Recargamos para que desaparezca de la lista y se actualice el número
+            }
+        } catch(error) {
+            console.error("Error al actualizar:", error);
         }
     }
 }

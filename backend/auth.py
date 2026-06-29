@@ -97,3 +97,98 @@ async def obtener_historial(email: str):
             cur.close()
         if conn:
             conn.close()
+
+# =======================================================
+# FASE 2: Ruta para el Buzón de Recuperación de Contraseña
+# =======================================================
+# 1. Modelo para recibir el correo
+class SolicitudClave(BaseModel):
+    correo: str
+
+# 2. Endpoint para guardar la solicitud
+@router.post("/api/recuperar-clave")
+async def solicitar_recuperacion(solicitud: SolicitudClave):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Insertamos la notificación en la base de datos
+        cur.execute(
+            "INSERT INTO notificaciones_claves (correo) VALUES (%s)",
+            (solicitud.correo,)
+        )
+        conn.commit()
+        
+        return {"status": "success", "message": "Solicitud enviada al administrador"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al guardar solicitud: {str(e)}")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+# =======================================================
+# FASE 3: Obtener y atender notificaciones (Panel Admin)
+# =======================================================
+
+@router.get("/api/notificaciones-pendientes")
+async def obtener_notificaciones():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Traemos solo las que NO han sido atendidas
+        cur.execute("""
+            SELECT id, correo, fecha_solicitud 
+            FROM notificaciones_claves 
+            WHERE atendido = FALSE 
+            ORDER BY fecha_solicitud DESC
+        """)
+        filas = cur.fetchall()
+        
+        notificaciones = []
+        for fila in filas:
+            notificaciones.append({
+                "id": fila[0],
+                "correo": fila[1],
+                # Formateamos la fecha para que se vea bonita
+                "fecha": fila[2].strftime("%Y-%m-%d %H:%M") 
+            })
+            
+        return {"status": "success", "notificaciones": notificaciones}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener notificaciones: {str(e)}")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+# Ruta para marcar que el administrador ya le cambió la clave
+@router.put("/api/notificaciones-atendidas/{noti_id}")
+async def marcar_atendida(noti_id: int):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Cambiamos "atendido" a TRUE
+        cur.execute(
+            "UPDATE notificaciones_claves SET atendido = TRUE WHERE id = %s",
+            (noti_id,)
+        )
+        conn.commit()
+        return {"status": "success", "message": "Notificación atendida"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al actualizar notificación: {str(e)}")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
