@@ -15,8 +15,8 @@ app.add_middleware(
     allow_origins=[
         "http://127.0.0.1:5500",
         "http://localhost:5500",
-        "https://skillchero.github.io/sistema-vocacional-ie"
-    ], 
+        "https://skillchero.github.io"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
